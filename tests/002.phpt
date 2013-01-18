@@ -1,17 +1,11 @@
 --TEST--
-Check for modify constant with APC enabled
+Check for modify constant
 --SKIPIF--
 <?php
 if (!extension_loaded('const_test')) {
     die('skip - const_test extension not loaded');
 }
-if (!extension_loaded('apc')) {
-    die('skip - apc extension not loaded');
-}
 ?>
---INI--
-apc.enabled=1
-apc.cli_enable=1
 --FILE--
 <?php
 echo CONST_TEST_FOO . PHP_EOL;
