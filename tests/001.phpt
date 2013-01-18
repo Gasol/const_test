@@ -1,21 +1,15 @@
 --TEST--
 Check for const_test presence
 --SKIPIF--
-<?php if (!extension_loaded("const_test")) print "skip"; ?>
+<?php
+if (!extension_loaded('const_test')) {
+    echo 'skip - const_test extension not loaded';
+    return;
+}
+?>
 --FILE--
 <?php 
-echo "const_test extension is available";
-/*
-	you can add regression tests for your extension here
-
-  the output of your test code has to be equal to the
-  text in the --EXPECT-- section below for the tests
-  to pass, differences between the output and the
-  expected text are interpreted as failure
-
-	see php5/README.TESTING for further information on
-  writing regression tests
-*/
+echo 'const_test extension is available';
 ?>
 --EXPECT--
 const_test extension is available

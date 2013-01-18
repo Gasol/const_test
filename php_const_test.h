@@ -42,27 +42,7 @@ PHP_RINIT_FUNCTION(const_test);
 PHP_RSHUTDOWN_FUNCTION(const_test);
 PHP_MINFO_FUNCTION(const_test);
 
-PHP_FUNCTION(confirm_const_test_compiled);	/* For testing, remove later. */
-
-/* 
-  	Declare any global variables you may need between the BEGIN
-	and END macros here:     
-
-ZEND_BEGIN_MODULE_GLOBALS(const_test)
-	long  global_value;
-	char *global_string;
-ZEND_END_MODULE_GLOBALS(const_test)
-*/
-
-/* In every utility function you add that needs to use variables 
-   in php_const_test_globals, call TSRMLS_FETCH(); after declaring other 
-   variables used by that function, or better yet, pass in TSRMLS_CC
-   after the last function argument and declare your utility function
-   with TSRMLS_DC after the last declared argument.  Always refer to
-   the globals in your function as CONST_TEST_G(variable).  You are 
-   encouraged to rename these macros something shorter, see
-   examples in any other php module directory.
-*/
+PHP_FUNCTION(modify_const);
 
 #ifdef ZTS
 #define CONST_TEST_G(v) TSRMG(const_test_globals_id, zend_const_test_globals *, v)

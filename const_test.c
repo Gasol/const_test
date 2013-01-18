@@ -34,15 +34,10 @@ ZEND_DECLARE_MODULE_GLOBALS(const_test)
 /* True global resources - no need for thread safety here */
 static int le_const_test;
 
-/* {{{ const_test_functions[]
- *
- * Every user visible function must have an entry in const_test_functions[].
- */
 const zend_function_entry const_test_functions[] = {
-	PHP_FE(confirm_const_test_compiled,	NULL)		/* For testing, remove later. */
+	PHP_FE(modify_const,	NULL)
 	PHP_FE_END	/* Must be the last line in const_test_functions[] */
 };
-/* }}} */
 
 /* {{{ const_test_module_entry
  */
@@ -68,34 +63,14 @@ zend_module_entry const_test_module_entry = {
 ZEND_GET_MODULE(const_test)
 #endif
 
-/* {{{ PHP_INI
- */
-/* Remove comments and fill if you need to have entries in php.ini
-PHP_INI_BEGIN()
-    STD_PHP_INI_ENTRY("const_test.global_value",      "42", PHP_INI_ALL, OnUpdateLong, global_value, zend_const_test_globals, const_test_globals)
-    STD_PHP_INI_ENTRY("const_test.global_string", "foobar", PHP_INI_ALL, OnUpdateString, global_string, zend_const_test_globals, const_test_globals)
-PHP_INI_END()
-*/
-/* }}} */
-
-/* {{{ php_const_test_init_globals
- */
-/* Uncomment this function if you have INI entries
-static void php_const_test_init_globals(zend_const_test_globals *const_test_globals)
-{
-	const_test_globals->global_value = 0;
-	const_test_globals->global_string = NULL;
-}
-*/
-/* }}} */
-
 /* {{{ PHP_MINIT_FUNCTION
  */
 PHP_MINIT_FUNCTION(const_test)
 {
-	/* If you have INI entries, uncomment these lines 
-	REGISTER_INI_ENTRIES();
-	*/
+	srand(time(NULL));
+	REGISTER_STRING_CONSTANT("CONST_TEST_FOO", "Foo", CONST_CS|CONST_PERSISTENT);
+	REGISTER_STRING_CONSTANT("CONST_TEST_BAR", "Bar", CONST_CS|CONST_PERSISTENT);
+	REGISTER_STRING_CONSTANT("CONST_TEST_ZOO", "Zoo", CONST_CS|CONST_PERSISTENT);
 	return SUCCESS;
 }
 /* }}} */
@@ -104,25 +79,16 @@ PHP_MINIT_FUNCTION(const_test)
  */
 PHP_MSHUTDOWN_FUNCTION(const_test)
 {
-	/* uncomment this line if you have INI entries
-	UNREGISTER_INI_ENTRIES();
-	*/
 	return SUCCESS;
 }
 /* }}} */
 
-/* Remove if there's nothing to do at request start */
-/* {{{ PHP_RINIT_FUNCTION
- */
 PHP_RINIT_FUNCTION(const_test)
 {
 	return SUCCESS;
 }
 /* }}} */
 
-/* Remove if there's nothing to do at request end */
-/* {{{ PHP_RSHUTDOWN_FUNCTION
- */
 PHP_RSHUTDOWN_FUNCTION(const_test)
 {
 	return SUCCESS;
@@ -136,41 +102,36 @@ PHP_MINFO_FUNCTION(const_test)
 	php_info_print_table_start();
 	php_info_print_table_header(2, "const_test support", "enabled");
 	php_info_print_table_end();
-
-	/* Remove comments if you have entries in php.ini
-	DISPLAY_INI_ENTRIES();
-	*/
 }
 /* }}} */
 
+void gen_random(char *s, const int len) {
+	static const char alphanum[] =
+		"0123456789"
+		"ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+		"abcdefghijklmnopqrstuvwxyz";
 
-/* Remove the following function when you have succesfully modified config.m4
-   so that your module can be compiled into PHP, it exists only for testing
-   purposes. */
-
-/* Every user-visible function in PHP should document itself in the source */
-/* {{{ proto string confirm_const_test_compiled(string arg)
-   Return a string to confirm that the module is compiled in */
-PHP_FUNCTION(confirm_const_test_compiled)
-{
-	char *arg = NULL;
-	int arg_len, len;
-	char *strg;
-
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s", &arg, &arg_len) == FAILURE) {
-		return;
+	for (int i = 0; i < len; ++i) {
+		//int rnd = rand();
+		//int index = rnd % (sizeof(alphanum) - 1);
+		int index = s[i] % (sizeof(alphanum) - 1);
+		s[i] = alphanum[index];
 	}
 
-	len = spprintf(&strg, 0, "Congratulations! You have successfully modified ext/%.78s/config.m4. Module %.78s is now compiled into PHP.", "const_test", arg);
-	RETURN_STRINGL(strg, len, 0);
+	s[len] = 0;
 }
-/* }}} */
-/* The previous line is meant for vim and emacs, so it can correctly fold and 
-   unfold functions in source code. See the corresponding marks just before 
-   function definition, where the functions purpose is also documented. Please 
-   follow this convention for the convenience of others editing your code.
-*/
 
+PHP_FUNCTION(modify_const)
+{
+	char *str = NULL;
+	int str_len = 0;
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s", &str, &str_len) == FAILURE) {
+		RETURN_FALSE;
+	}
+
+	gen_random(str, str_len);
+	RETURN_STRINGL(str, strlen(str), 0);
+}
 
 /*
  * Local variables:
