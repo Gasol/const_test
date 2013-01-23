@@ -1,5 +1,5 @@
 --TEST--
-Check for modify constant
+Check for modify custom constant
 --SKIPIF--
 <?php
 if (!extension_loaded('const_test')) die('skip - const_test extension not loaded');
