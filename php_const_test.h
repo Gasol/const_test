@@ -8,8 +8,6 @@
  * the LICENSE file in this directory for full text.
  **/
 
-/* $Id$ */
-
 #ifndef PHP_CONST_TEST_H
 #define PHP_CONST_TEST_H
 
