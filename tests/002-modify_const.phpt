@@ -2,9 +2,7 @@
 Check for modify constant
 --SKIPIF--
 <?php
-if (!extension_loaded('const_test')) {
-    die('skip - const_test extension not loaded');
-}
+if (!extension_loaded('const_test')) die('skip - const_test extension not loaded');
 ?>
 --FILE--
 <?php
